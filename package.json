@@ -4,8 +4,10 @@
   "description": "notesapp api",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
     "start": "ts-node build/index.js",
+    "build": "npx tsc",
+    "build:ui":"rm -rf dist && cd ../fullstack-open && npm run build && cp -r dist ../fulstackopen-api",
+    "deploy:full":"npm run build:ui && git add . && git commit -m uibuild && git push",
     "dev": "nodemon build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
