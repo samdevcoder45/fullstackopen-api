@@ -21,6 +21,7 @@ const unknownEndpoint = (req, res) => {
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use(requestLogger);
+app.use(express_1.default.static('dist'));
 let notes = [
     {
         id: 1,
