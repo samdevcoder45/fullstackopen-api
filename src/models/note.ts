@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 mongoose.set("strictQuery", false);
 
-const url = process.env.MONGO_URI!;
+const url = process.env.MONGO_URI;
 console.log("connecting to", url);
 
 mongoose
-  .connect(url)
+  .connect(url!)
   .then((result) => {
     console.log("connected to MONGODB");
   })
