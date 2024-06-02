@@ -4,13 +4,13 @@
   "description": "notesapp api",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node build/index.js",
+    "start": "cross-env NODE_ENV=production ts-node build/index.js",
     "build": "npx tsc",
     "build:ui": "rm -rf dist && cd ../fullstack-open && npm run build && cp -r dist ../fulstackopen-api",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
-    "dev": "nodemon build/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon build/index.js",
     "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test node --test"
   },
   "author": "samdevcoder45",
   "license": "MIT",
@@ -19,12 +19,12 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.13.0",
+    "cross-env": "^7.0.3",
     "globals": "^15.3.0",
     "nodemon": "^3.1.2",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^7.11.0"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "cors": "^2.8.5",
