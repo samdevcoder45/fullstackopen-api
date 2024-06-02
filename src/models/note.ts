@@ -1,16 +1,4 @@
 import mongoose from "mongoose";
-mongoose.set("strictQuery", false);
-
-const url = process.env.MONGO_URI;
-
-mongoose
-  .connect(url!)
-  .then((result) => {
-    console.log("connected to MONGODB");
-  })
-  .catch((error) => {
-    console.log("error connecting to MONGODB:", error.message);
-  });
 
 const noteSchema = new mongoose.Schema({
   content: {
