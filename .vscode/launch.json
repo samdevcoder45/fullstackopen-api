@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "type": "chrome",
+      "name": "https://fullstackopen-api-run1.onrender.com/",
+      "request": "launch",
+      "url": "https://fullstackopen-api-run1.onrender.com/"
+    }
+  ]
+}
