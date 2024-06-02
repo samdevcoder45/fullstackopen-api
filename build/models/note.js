@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 mongoose_1.default.set("strictQuery", false);
 const url = process.env.MONGO_URI;
-console.log("connecting to", url);
 mongoose_1.default
     .connect(url)
     .then((result) => {
@@ -16,7 +15,11 @@ mongoose_1.default
     console.log("error connecting to MONGODB:", error.message);
 });
 const noteSchema = new mongoose_1.default.Schema({
-    content: String,
+    content: {
+        type: String,
+        minLength: 5,
+        required: true,
+    },
     important: Boolean,
 });
 noteSchema.set("toJSON", {

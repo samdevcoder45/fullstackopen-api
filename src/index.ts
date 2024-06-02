@@ -13,14 +13,28 @@ const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
+const errorHandler = (
+  error: any,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return res.status(400).json({ error: error.message });
+  }
+
+  next(error);
+};
 const unknownEndpoint = (req: Request, res: Response) => {
   res.status(404).send({ error: "unknown endpoint" });
 };
 
 app.use(cors());
+app.use(express.static("dist"));
 app.use(express.json());
 app.use(requestLogger);
-app.use(express.static("dist"));
 
 app.get("/api/notes", (req: Request, res: Response) => {
   Note.find({}).then((notes) => {
@@ -28,17 +42,19 @@ app.get("/api/notes", (req: Request, res: Response) => {
   });
 });
 
-app.get("/api/notes/:id", (req: Request, res: Response) => {
-  Note.findById(req.params.id).then((note) => {
-    if (note) {
-      res.json(note);
-    } else {
-      res.status(404).end();
-    }
-  });
+app.get("/api/notes/:id", (req: Request, res: Response, next: NextFunction) => {
+  Note.findById(req.params.id)
+    .then((note) => {
+      if (note) {
+        res.json(note);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
-app.post("/api/notes", (req: Request, res: Response) => {
+app.post("/api/notes", (req: Request, res: Response, next: NextFunction) => {
   const body = req.body;
 
   if (!body.content) {
@@ -50,9 +66,31 @@ app.post("/api/notes", (req: Request, res: Response) => {
     important: body.important || false,
   });
 
-  note.save().then((savedNote) => {
-    res.json(savedNote);
-  });
+  note
+    .save()
+    .then((savedNote) => {
+      res.json(savedNote);
+    })
+    .catch((error) => next(error));
+});
+
+app.put("/api/notes/:id", (req: Request, res: Response, next: NextFunction) => {
+  const body = req.body;
+
+  const note = {
+    content: body.content,
+    important: body.important,
+  };
+
+  Note.findByIdAndUpdate(req.params.id, note, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
+    .then((updatedNote) => {
+      res.json(updatedNote);
+    })
+    .catch((error) => next(error));
 });
 
 app.delete(
@@ -67,6 +105,7 @@ app.delete(
 );
 
 app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT);
