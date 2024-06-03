@@ -21,16 +21,11 @@ notesRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* (
 }));
 notesRouter.get("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const note = yield note_1.default.findById(req.params.id);
-    try {
-        if (note) {
-            res.json(note);
-        }
-        else {
-            res.status(404).end();
-        }
+    if (note) {
+        res.json(note);
     }
-    catch (error) {
-        next(error);
+    else {
+        res.status(404).end();
     }
 }));
 notesRouter.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -39,31 +34,22 @@ notesRouter.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, func
         content: body.content,
         important: body.important || false,
     });
-    try {
-        const savedNote = yield note.save();
-        res.status(201).json(savedNote);
-    }
-    catch (error) {
-        next(error);
-    }
+    const savedNote = yield note.save();
+    res.status(201).json(savedNote);
 }));
 notesRouter.delete("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    yield note_1.default.findByIdAndDelete(req.params.id)
-        .then(() => {
-        res.status(204).end();
-    })
-        .catch((error) => next(error));
+    yield note_1.default.findByIdAndDelete(req.params.id);
+    res.status(204).end();
 }));
-notesRouter.put("/:id", (req, res, next) => {
+notesRouter.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     const note = {
         content: body.content,
         important: body.important,
     };
-    note_1.default.findByIdAndUpdate(req.params.id, note, { new: true })
-        .then((updatedNote) => {
-        res.json(updatedNote);
-    })
-        .catch((error) => next(error));
-});
+    const updatedNote = yield note_1.default.findByIdAndUpdate(req.params.id, note, {
+        new: true,
+    });
+    res.json(updatedNote);
+}));
 exports.default = notesRouter;
