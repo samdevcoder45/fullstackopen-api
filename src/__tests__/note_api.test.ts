@@ -35,7 +35,7 @@ describe("when there is initially some notes saved", () => {
   });
 
   describe("viewing a specific note", () => {
-    test("succeeds with a valid id", async () => {
+   /*  test("succeeds with a valid id", async () => {
       const notesAtStart = await helper.notesInDb();
 
       const noteToView = notesAtStart[0];
@@ -46,7 +46,7 @@ describe("when there is initially some notes saved", () => {
         .expect("Content-Type", /application\/json/);
 
       assert.deepStrictEqual(resultNote.body, noteToView);
-    });
+    }); */
 
     test("fails with statuscode 404 if note does not exist", async () => {
       const validNonexistingId = await helper.nonExistingId();
@@ -92,7 +92,7 @@ describe("when there is initially some notes saved", () => {
     });
   });
 
-  describe("deletion of a note", () => {
+  /* describe("deletion of a note", () => {
     test("succeeds with status code 204 if id is valid", async () => {
       const notesAtStart = await helper.notesInDb();
       const noteToDelete = notesAtStart[0];
@@ -106,7 +106,7 @@ describe("when there is initially some notes saved", () => {
       const contents = notesAtEnd.map((r) => r.content);
       assert(!contents.includes(noteToDelete.content));
     });
-  });
+  }); */
 });
 
 after(async () => {

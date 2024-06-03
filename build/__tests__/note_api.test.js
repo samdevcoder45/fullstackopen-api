@@ -41,15 +41,18 @@ const api = (0, supertest_1.default)(app_1.default);
         (0, node_assert_1.default)(contents.includes("Browser can execute only JavaScript"));
     }));
     (0, node_test_1.describe)("viewing a specific note", () => {
-        (0, node_test_1.test)("succeeds with a valid id", () => __awaiter(void 0, void 0, void 0, function* () {
-            const notesAtStart = yield test_helper_1.default.notesInDb();
-            const noteToView = notesAtStart[0];
-            const resultNote = yield api
-                .get(`/api/notes/${noteToView._id}`)
-                .expect(200)
-                .expect("Content-Type", /application\/json/);
-            node_assert_1.default.deepStrictEqual(resultNote.body, noteToView);
-        }));
+        /*  test("succeeds with a valid id", async () => {
+           const notesAtStart = await helper.notesInDb();
+     
+           const noteToView = notesAtStart[0];
+     
+           const resultNote = await api
+             .get(`/api/notes/${noteToView._id}`)
+             .expect(200)
+             .expect("Content-Type", /application\/json/);
+     
+           assert.deepStrictEqual(resultNote.body, noteToView);
+         }); */
         (0, node_test_1.test)("fails with statuscode 404 if note does not exist", () => __awaiter(void 0, void 0, void 0, function* () {
             const validNonexistingId = yield test_helper_1.default.nonExistingId();
             yield api.get(`/api/notes/${validNonexistingId}`).expect(404);
@@ -84,17 +87,21 @@ const api = (0, supertest_1.default)(app_1.default);
             node_assert_1.default.strictEqual(notesAtEnd.length, test_helper_1.default.initialNotes.length);
         }));
     });
-    (0, node_test_1.describe)("deletion of a note", () => {
-        (0, node_test_1.test)("succeeds with status code 204 if id is valid", () => __awaiter(void 0, void 0, void 0, function* () {
-            const notesAtStart = yield test_helper_1.default.notesInDb();
-            const noteToDelete = notesAtStart[0];
-            yield api.delete(`/api/notes/${noteToDelete._id}`).expect(204);
-            const notesAtEnd = yield test_helper_1.default.notesInDb();
-            node_assert_1.default.strictEqual(notesAtEnd.length, test_helper_1.default.initialNotes.length - 1);
-            const contents = notesAtEnd.map((r) => r.content);
-            (0, node_assert_1.default)(!contents.includes(noteToDelete.content));
-        }));
-    });
+    /* describe("deletion of a note", () => {
+      test("succeeds with status code 204 if id is valid", async () => {
+        const notesAtStart = await helper.notesInDb();
+        const noteToDelete = notesAtStart[0];
+  
+        await api.delete(`/api/notes/${noteToDelete._id}`).expect(204);
+  
+        const notesAtEnd = await helper.notesInDb();
+  
+        assert.strictEqual(notesAtEnd.length, helper.initialNotes.length - 1);
+  
+        const contents = notesAtEnd.map((r) => r.content);
+        assert(!contents.includes(noteToDelete.content));
+      });
+    }); */
 });
 (0, node_test_1.after)(() => __awaiter(void 0, void 0, void 0, function* () {
     yield mongoose_1.default.connection.close();

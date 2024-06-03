@@ -12,35 +12,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const note_1 = __importDefault(require("../models/note"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const express_1 = __importDefault(require("express"));
+const usersRouter = express_1.default.Router();
 const user_1 = __importDefault(require("../models/user"));
-const initialNotes = [
-    {
-        content: "HTML is easy",
-        important: false,
-    },
-    {
-        content: "Browser can execute only JavaScript",
-        important: false,
-    },
-];
-const nonExistingId = () => __awaiter(void 0, void 0, void 0, function* () {
-    const note = new note_1.default({ content: "willremovethissoon" });
-    yield note.save();
-    yield note.deleteOne();
-    return note._id.toString();
-});
-const notesInDb = () => __awaiter(void 0, void 0, void 0, function* () {
-    const notes = yield note_1.default.find({});
-    return notes.map((note) => note.toJSON());
-});
-const usersInDb = () => __awaiter(void 0, void 0, void 0, function* () {
+usersRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, name, password } = req.body;
+    const saltRounds = process.env.SALT_ROUNDS;
+    const passwordHash = yield bcrypt_1.default.hash(password, Number(saltRounds));
+    const user = new user_1.default({
+        username,
+        name,
+        passwordHash,
+    });
+    const savedUser = yield user.save();
+    res.status(201).json(savedUser);
+}));
+usersRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield user_1.default.find({});
-    return users.map((u) => u.toJSON());
-});
-exports.default = {
-    initialNotes,
-    nonExistingId,
-    notesInDb,
-    usersInDb,
-};
+    res.json(users);
+}));
+exports.default = usersRouter;
