@@ -1,9 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import Note from "../models/note";
+import User from "../models/user";
 const notesRouter = express.Router();
-
+interface JwtPayload {
+  id: string;
+}
 notesRouter.get("/", async (req: Request, res: Response) => {
-  const notes = await Note.find({});
+  const notes = await Note.find({}).populate("user", { username: 1, name: 1 });
   res.json(notes);
 });
 
@@ -19,17 +23,43 @@ notesRouter.get(
   }
 );
 
+const getTokenFrom = (req: Request) => {
+  const authorization = req.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    return authorization.replace("Bearer ", "");
+  }
+
+  return null;
+};
+
 notesRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     const body = req.body;
+    const decodedToken = jwt.verify(
+      getTokenFrom(req)!,
+      process.env.SECRET!
+    ) as JwtPayload;
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: "token invalid" });
+    }
+
+    const user = await User.findById(decodedToken.id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     const note = new Note({
       content: body.content,
-      important: body.important || false,
+      important: body.important === undefined ? false : body.important,
+      user: user._id,
     });
 
     const savedNote = await note.save();
+    user.notes = user.notes.concat(savedNote._id);
+    await user.save();
+
     res.status(201).json(savedNote);
   }
 );

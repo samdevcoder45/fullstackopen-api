@@ -20,7 +20,7 @@ usersRouter.post("/", async (req: Request, res: Response) => {
 });
 
 usersRouter.get("/", async (req: Request, res: Response) => {
-  const users = await User.find({});
+  const users = await User.find({}).populate("notes",{content:1,important:1});
   res.json(users);
 });
 

@@ -13,6 +13,7 @@ const users_1 = __importDefault(require("./controllers/users"));
 const middleware_1 = __importDefault(require("./utils/middleware"));
 const logger_1 = __importDefault(require("./utils/logger"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const login_1 = __importDefault(require("./controllers/login"));
 mongoose_1.default.set("strictQuery", false);
 logger_1.default.info("connecting to", config_1.default.MONGO_URI);
 mongoose_1.default
@@ -29,6 +30,7 @@ app.use(express_1.default.json());
 app.use(middleware_1.default.requestLogger);
 app.use("/api/notes", notes_1.default);
 app.use("/api/users", users_1.default);
+app.use("/api/login", login_1.default);
 app.use(middleware_1.default.unknownEndpoint);
 app.use(middleware_1.default.errorHandler);
 exports.default = app;
