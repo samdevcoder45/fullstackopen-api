@@ -9,6 +9,7 @@ import middleware from "./utils/middleware";
 import logger from "./utils/logger";
 import mongoose from "mongoose";
 import loginRouter from "./controllers/login";
+import testingRouter from "./controllers/testing";
 
 mongoose.set("strictQuery", false);
 
@@ -29,6 +30,11 @@ app.use(middleware.requestLogger);
 app.use("/api/notes", notesRouter);
 app.use("/api/users",usersRouter)
 app.use("/api/login",loginRouter)
+
+//add the testing router only if the application is run in test-mode
+if(process.env.NODE_ENV === 'test'){
+  app.use('/api/testing',testingRouter)
+}
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
